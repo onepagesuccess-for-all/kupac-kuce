@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Profil željene kuće</title>
+<meta property="og:title" content="Profil željene kuće">
+<meta property="og:description" content="Molimo Vas popunite upitnik. Trajaće najduže 2–3 minuta, a nama ćete time pomoći da Vam brzo pronađemo odgovarajuću kuću. Hvala Vam 😊">
+<meta property="og:image" content="https://onepagesuccess-for-all.github.io/kupac-kuce/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:url" content="https://onepagesuccess-for-all.github.io/kupac-kuce/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: #0f0f10;
+    color: #eae6df;
+    font-family: 'Jost', Arial, sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap');
+
+  h1, h2, h3 { font-family: 'Cormorant Garamond', serif; }
+
+  header {
+    text-align: center;
+    padding: 28px 16px 16px;
+    border-bottom: 1px solid #2a2a2c;
+  }
+  header h1 {
+    font-size: 1.7rem;
+    color: #d9b46a;
+    margin: 0 0 6px;
+    letter-spacing: 0.5px;
+  }
+  header p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #9c9890;
+  }
+
+  /* progress bar */
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #0f0f10;
+    padding: 10px 16px 14px;
+    border-bottom: 1px solid #2a2a2c;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: #b8b3a8;
+    margin-bottom: 6px;
+  }
+  .progress-track {
+    width: 100%;
+    max-width: 100%;
+    height: 10px;
+    background: #232324;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #b98d3e, #e8c77e);
+    transition: width 0.3s ease;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px 16px 100px;
+  }
+
+  .section {
+    border: 1px solid #262626;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    background: #161616;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-header h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #e8c77e;
+    font-weight: 600;
+  }
+  .section-header .num {
+    color: #6c6a64;
+    font-size: 0.8rem;
+    margin-right: 8px;
+  }
+  .chevron {
+    color: #d9b46a;
+    transition: transform 0.25s ease;
+    font-size: 1rem;
+  }
+  .section.open .chevron { transform: rotate(180deg); }
+
+  .section-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    padding: 0 16px;
+  }
+  .section.open .section-body {
+    max-height: 3000px;
+    padding: 0 16px 16px;
+  }
+
+  .opstina-block { margin-bottom: 10px; }
+  .opstina-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+    cursor: pointer;
+    border-bottom: 1px solid #232323;
+  }
+  .opstina-title .plus {
+    color: #d9b46a;
+    font-size: 1.1rem;
+    width: 18px;
+    text-align: center;
+  }
+  .opstina-title span.name { font-size: 0.95rem; }
+  .naselja {
+    display: none;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 0 12px 26px;
+  }
+  .naselja.open { display: flex; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #333;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: #cfcac0;
+    background: #1c1c1c;
+  }
+  .chip.selected {
+    background: #3a2f1a;
+    border-color: #d9b46a;
+    color: #f0d8a0;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  label.field-label {
+    display: block;
+    font-size: 0.78rem;
+    color: #9c9890;
+    margin-bottom: 4px;
+  }
+  input[type="text"], input[type="number"], textarea, select {
+    width: 100%;
+    max-width: 100%;
+    background: #1c1c1c;
+    border: 1px solid #333;
+    color: #eae6df;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+  }
+  textarea { min-height: 80px; resize: vertical; }
+
+  .check-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: #1c1c1c;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+  }
+  .check-item.selected {
+    border-color: #d9b46a;
+    background: #241d10;
+  }
+  .check-item .box {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .check-item.selected .box::after {
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d9b46a;
+    font-size: 12px;
+  }
+
+  .radio-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .radio-chip {
+    padding: 8px 14px;
+    border: 1px solid #333;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #cfcac0;
+    background: #1c1c1c;
+  }
+  .radio-chip.selected {
+    background: #3a2f1a;
+    border-color: #d9b46a;
+    color: #f0d8a0;
+  }
+
+  .priority-note {
+    font-size: 0.78rem;
+    color: #8a8579;
+    margin-bottom: 8px;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #0f0f10;
+    border-top: 1px solid #2a2a2c;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    z-index: 60;
+  }
+  .btn {
+    flex: 1;
+    text-align: center;
+    padding: 13px 10px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: linear-gradient(90deg, #b98d3e, #e8c77e);
+    color: #1a1a1a;
+  }
+  .btn-secondary {
+    background: #1c1c1c;
+    color: #d9b46a;
+    border: 1px solid #d9b46a;
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal h3 { color: #d9b46a; margin-top: 0; }
+  .modal pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: 0.82rem;
+    background: #0f0f10;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #262626;
+    color: #d8d3c8;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .modal-actions .btn { flex: 1; min-width: 120px; }
+  .close-x {
+    float: right;
+    cursor: pointer;
+    color: #9c9890;
+    font-size: 1.2rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Profil željene kuće</h1>
+  <p>Molimo Vas popunite upitnik. Trajaće najduže 2–3 minuta, a nama ćete time pomoći da Vam brzo pronađemo odgovarajuću kuću. Hvala Vam 😊</p>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>Popunjeno</span>
+    <span id="progressText">0%</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<main id="formRoot"></main>
+
+<footer>
+  <button class="btn btn-secondary" onclick="resetForm()">Obriši</button>
+  <button class="btn btn-primary" onclick="showSummary()">Pošalji profil</button>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <span class="close-x" onclick="closeModal()">✕</span>
+    <h3>Vaš profil je spreman</h3>
+    <p style="font-size:0.85rem;color:#9c9890;">Pregledajte i pošaljite na jedan od načina ispod.</p>
+    <pre id="summaryText"></pre>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="submitBtn" onclick="sendFormSubmit()">Pošalji profil</button>
+      <button class="btn btn-secondary" onclick="sendWhatsApp()">WhatsApp</button>
+      <button class="btn btn-secondary" onclick="sendViber()">Viber</button>
+      <button class="btn btn-secondary" onclick="sendSMS()">SMS</button>
+      <button class="btn btn-secondary" onclick="copyText()">Kopiraj tekst</button>
+    </div>
+    <p id="sendStatus" style="font-size:0.8rem;color:#9c9890;margin-top:10px;"></p>
+    <p style="font-size:0.76rem;color:#8a8579;margin-top:4px;">WhatsApp radi ako kupac ima bilo kakav WhatsApp nalog (telefon ili web). Viber automatski kopira ceo tekst — samo ga nalepite (dugi pritisak → Nalepi) kad se aplikacija otvori.</p>
+  </div>
+</div>
+
+<script>
+/* ====================== PODACI ====================== */
+
+const OPSTINE = {
+  "Vračar": ["Beogradska", "Bulevar kralja Aleksandra", "Bulevar oslobođenja", "Centar", "Crveni krst", "Cvetni trg", "Čubura", "Gospodara Vučića", "Gradić Pejton", "Hram svetog Save", "Južni bulevar", "Kalenić pijaca", "Karađorđev park", "Kneza Miloša", "Kralja Milana", "Krunska", "Krunski venac", "Maksima Gorkog", "Neimar", "Pravni fakultet", "Resavska", "Savinac", "SC Vračar", "Slavija", "Svetozara Markovića"],
+  "Zvezdara": ["Bulbulder", "Bulevar kralja Aleksandra", "Crveni krst", "Cvetanova ćuprija", "Cvetkova pijaca", "Denkova bašta", "Depo", "Dimitrija Tucovića", "Đeram pijaca", "Gradska bolnica", "Kluz", "Konjarnik", "Lion", "Lipov lad", "Mali Mokri Lug", "Medaković 3", "Mirijevo", "Novo groblje", "Olimp", "Rudo", "Severni bulevar", "Slavujev venac", "Smederevski put", "Učiteljsko naselje", "Ustanička", "Veliki Mokri Lug", "Vojvode Vlahovića", "Vukov Spomenik", "Zeleno brdo", "Zvezdara 2", "Zvezdara 3", "Zvezdarska padina", "Zvezdarska šuma"],
+  "Voždovac": ["Autokomanda", "Avala", "Banjica", "Beli potok", "Bioskop Voždovac", "Braće Jerković", "Bubanj potok", "Bulevar oslobođenja", "Centar", "Činovnička kolonija", "Darvinova pošta", "Dušanovac", "Farmaceutski fakultet", "FON - Bilećka", "Franš", "Gaj", "Gospodara Vučića", "Hotel M", "Jajinci", "Jove Ilića", "Konjarnik", "Kumodraška", "Kumodraž", "Kumodraž selo", "Lekino brdo", "Mala Utrina", "Marinkova bara", "Medaković 1", "Medaković 2", "Medaković 3", "Medaković padina", "Mitrovo Brdo", "Naselje Stepa Stepanović", "Pašino brdo", "Pinosava", "Prnjavor", "Rakovica selo", "Ripanj", "Saobraćajni fakultet", "Siva stena", "Stepin lug", "Šumice", "Šuplja stena", "TC Stadion", "Torlak", "Trošarina", "Ustanička", "Vitanovačka", "Vojislava Ilića", "Vojvode Stepe", "Vojvode Vlahovića", "Voždovačka crkva", "Zaplanjska", "Zuce"],
+  "Novi Beograd": ["Ada Međica", "Arena", "Bežanijska kosa 1", "Bežanijska kosa 2", "Bežanijska kosa 3", "Blok 1", "Blok 2", "Blok 3", "Blok 4", "Blok 5", "Blok 6", "Blok 7", "Blok 8", "Blok 8a", "Blok 9", "Blok 9a", "Blok 9b", "Blok 10", "Blok 11", "Blok 11a", "Blok 11b", "Blok 13", "Blok 14", "Blok 15", "Blok 16 (TC Ušće)", "Blok 17", "Blok 18 (Staro sajmište)", "Blok 19a", "Blok 20", "Blok 21", "Blok 22", "Blok 23", "Blok 24 (Super Vero)", "Blok 26", "Blok 28", "Blok 29", "Blok 30 (B92)", "Blok 31", "Blok 32", "Blok 33", "Blok 34 (Carina)", "Blok 35 (SC 11. april)", "Blok 37", "Blok 37a", "Blok 38", "Blok 39", "Blok 40", "Blok 41 (Expo centar)", "Blok 41a (GTC)", "Blok 42", "Blok 43", "Blok 44 (TC Piramida)", "Blok 45 (TC Enjub)", "Blok 49", "Blok 53 (Kvantaš)", "Blok 58", "Blok 60", "Blok 61", "Blok 62", "Blok 63", "Blok 64", "Blok 65", "Blok 66", "Blok 66a", "Blok 67 (Belvil)", "Blok 67a (A blok)", "Blok 68", "Blok 69", "Blok 70 (kineski trž. centar)", "Blok 70a", "Blok 71", "Blok 72", "Dr Ivana Ribara", "Fontana", "Hotel Hyatt", "Hotel Jugoslavija", "Ledine", "Novi Merkator", "Sava centar", "Savski nasip", "Stara Bežanija", "Stari Merkator", "Tošin bunar", "Trešnjinog cveta", "Ušće", "YUBC"],
+  "Čukarica": ["Ada Ciganlija", "Banovo brdo", "Bele vode", "Careva Ćuprija", "Centar", "Cerak", "Cerak vinogradi", "Čukarička padina", "Filmski grad", "Golf", "Ibarska magistrala", "Julino brdo", "Košutnjak", "Makiš", "Novi Železnik", "Orlovača", "Ostružnica", "Pećani", "Repište", "Rucka", "Rupčine", "Rušanj", "Sremčica", "Sunčana padina", "Trgovačka", "Umka", "Velika Moštanica", "Vodovodska", "Žarkovo", "Železnik"],
+  "Savski venac": ["Autokomanda", "Balkanska", "Bara Venecija", "Beograd na vodi", "Beograđanka", "Brankova", "Centar", "Dedinje", "Ekonomski fakultet", "Gavrila Principa", "Humska", "Karađorđeva", "Klinički centar", "Kneza Miloša", "Kraljice Natalije", "Lisičji potok", "Mostarska petlja", "Nemanjina", "Palata pravde", "Prokop", "Resavska", "Sajam", "Sarajevska", "Savski trg - Pristanište", "Senjak", "Stadion Crvene zvezde", "Stadion Partizana", "Svetozara Markovića", "Topčider", "Višegradska", "VMA", "Zeleni venac"],
+  "Stari grad": ["25. maj", "Andrićev venac", "Atelje 212", "Bajlonijeva pijaca", "Balkanska", "Cara Dušana", "Centar", "Dom omladine", "Dorćol", "Dunavski kej", "Francuska", "Gundulićev venac", "Kalemegdan", "Knez Mihailova", "Kopitareva gradina", "Kosančićev venac", "Kralja Milana", "Kralja Petra", "K-District", "London", "Obilićev venac", "Politika", "Savamala", "Skadarlija", "Skupština", "Studentski trg", "Takovska", "Terazije", "Topličin venac", "Trg Nikole Pašića", "Trg Republike", "Zeleni venac"],
+  "Palilula": ["27. marta", "Ada Huja", "Bela stena", "Besni Fok", "Bogoslovija", "Borča", "Borča Greda", "Botanička bašta", "Bulevar despota Stefana", "Centar", "Cvijićeva", "Ćalije", "Dalmatinska", "Dunavski venac", "Hadžipopovac", "Hala Pionir", "Jabučki Rit", "Karaburma", "Kotež", "Kovilovo", "Kožara", "Krnjača", "Lešće", "Mašinski fakultet", "Mika Alas", "Ovča", "Padinska skela", "Palilulska pijaca", "Pančevački put", "Pančevački most", "Poštanska štedionica", "Profesorska kolonija", "Rospi ćuprija", "Ruzveltova", "Slanci", "Tašmajdan", "Veliko selo", "Viline vode", "Višnjica", "Višnjička Banja", "Višnjičko polje", "Zira", "Zrenjaninski put"],
+  "Rakovica": ["Centar", "Ibarska magistrala", "Kanarevo brdo", "Kijevo", "Kneževac", "Labudovo brdo", "Miljakovac", "Novo Skojevsko naselje", "Petlovo brdo", "Rakovica (mesto)", "Resnik", "Skojevsko naselje", "Stari Košutnjak", "Vidikovac", "Vidikovačka padina", "Vidikovački venac"],
+  "Zemun": ["13. maj", "Altina", "Autoput za Novi Sad", "Autoput za Zagreb", "Bački Ilovik", "Batajnica", "Batajnički drum", "Busije", "Cara Dušana", "Centar", "Ćukovac", "Dobanovačka", "Donji grad", "Galenika", "Gardoš", "Gornji grad", "Goveđi brod", "Grmovac", "Jelovac", "Kalvarija", "Kamendin", "Karađorđev trg", "Kej", "Kolonija Zmaj", "Lido", "Mala pruga", "Marija Bursać", "Meandri", "Muhar", "Naselje Sveti Sava", "Novi grad", "Plavi horizonti", "Pregrevica", "Prvomajska", "Retenzija", "Šangaj", "Save Kovačevića", "Sutjeska", "Tošin bunar", "Ugrinovačka", "Ugrinovci", "Vojni put", "Zelena avenija", "Zemun Bačka", "Zemun polje", "Zemunske kapije", "Železnička kolonija"],
+  "Surčin": ["Surčin (mesto)", "Ledine", "Jakovo", "Radiofar", "Boljevci", "Bečmen", "Dobanovci", "Progar", "Petrovčić", "Novi Surčin", "Ne znam tačno / okolina"],
+  "Grocka": ["Begaljica", "Boleč", "Brestovik", "Dražanj", "Grocka (mesto)", "Kaluđerica", "Kamendol", "Leštane", "Plavinci", "Pudarci", "Radmilovac", "Ritopek", "Smederevski put", "Umčari", "Vinča", "Vrčin", "Zaklopača", "Živkovac"],
+  "Barajevo": ["Arnajevo", "Baćevac", "Barajevo (mesto)", "Bela reka", "Beljina", "Boždarevac", "Dražanovac", "Dubrave", "Gaj", "Glumčevo brdo", "Guncati", "Ibarska magistrala", "Karaula", "Lipovica", "Lipovička šuma", "Lisović", "Manić", "Meljak", "Nenadovac", "Pajšuma", "Rašića kraj", "Ravni gaj", "Rožanci", "Srednji kraj", "Stara Lipovica", "Suva šuma", "Šiljakovac", "Taraiš", "Trebež", "Veliki Borak", "Vitkovica", "Vranić"],
+  "Lazarevac": ["Arapovac", "Baroševac", "Barzilovica", "Bistrica", "Brajkovac", "Burovo", "Cvetovac", "Čibutkovica", "Ćelije", "Dren", "Dudovica", "Junkovac", "Kruševica", "Lazarevac (mesto)", "Leskovac", "Lukavica", "Mali Crljeni", "Medoševac", "Mirosaljci", "Petka", "Prkosava", "Rudovci", "Sokolovo", "Stepojevac", "Strmovo", "Stubica", "Šopić", "Šušnjar", "Trbušnica", "Veliki Crljeni", "Vrbovno", "Vreoci", "Zeoke", "Županjac"],
+  "Mladenovac": ["Amerić", "Beluće", "Crkvine", "Dubona", "Granice", "Jagnjilo", "Koraćica", "Kosmaj", "Kovačevac", "Mala Vrbica", "Markovac", "Međulužje", "Mladenovac (mesto)", "Mladenovac selo", "Pružatovac", "Rabrovac", "Rajkovac", "Selters Banja", "Senaja", "Šepšin", "Velika Ivanča", "Velika Krsna", "Vlaška"],
+  "Obrenovac": ["Baljevac", "Barič", "Belo Polje", "Brgulice", "Brović", "Draževac", "Dren", "Grabovac", "Jasenak", "Konatice", "Krtinska", "Ljubinić", "Mala Moštanica", "Mislođin", "Obrenovac (mesto)", "Orašac", "Piroman", "Poljane", "Ratari", "Rvati", "Skela", "Stubline", "Trstenica", "Urovci", "Ušće", "Veliko polje", "Vukićevica", "Zabrežje", "Zvečka"],
+  "Sopot": ["Avala", "Babe", "Đurinci", "Drlupa", "Dučina", "Guberevac", "Kosmaj", "Mala Ivanča", "Mali Popović", "Mali Požarevac", "Nemenikuće", "Parcani", "Popović", "Ralja", "Rogača", "Ropočevo", "Sibnica", "Slatina", "Sopot (mesto)", "Stojnik"]
+};
+
+const RADIUS_OPCIJE = ["Samo ovaj deo", "Okolna naselja do 500 m", "Do 1 km", "Do 2 km", "Nije bitno"];
+
+/* stanje aplikacije */
+const state = {
+  opstine: {},        // { "Vračar": Set(naselja) }
+  radius: new Set(),
+  tip: new Set(),
+  povrsinaMin: "", povrsinaMax: "",
+  placMin: "", placMax: "",
+  cenaMin: "", cenaMax: "",
+  nacinKupovine: new Set(), kreditStatus: new Set(),
+  uknjizenost: new Set(),
+  spratnost: new Set(),
+  dvoriste: new Set(),
+  bazen: new Set(),
+  grejanje: new Set(),
+  stanje: new Set(),
+  orijentacija: new Set(),
+  osvetljenost: new Set(),
+  parking: new Set(),
+  ostave: new Set(),
+  dokumentacija: new Set(),
+  sadrzaji: new Set(),
+  prioriteti: new Set(),
+  dodatno: "",
+  prodajeNekretninu: new Set(),
+  kadaKupovina: new Set(),
+  adaptacija: new Set(),
+  asfaltiranPrilaz: new Set(),
+  odmahUseljiv: new Set(),
+  ljubimci: new Set(),
+  ulica: new Set(),
+  minutiPrevoz: "",
+  minutiSkola: "",
+  pogled2: new Set(),
+  video: new Set(),
+  tipGradnje: new Set(),
+  ime: "",
+  telefon1: "",
+  telefon2: "",
+  email: ""
+};
+
+const PRIORITETI_LISTA = ["Lokacija","Cena","Kvadratura kuće","Kvadratura placa","Uknjiženost","Garaža","Bazen","Dvorište/bašta","Miran kraj","Škole","Prevoz","Novogradnja","Starogradnja","Luksuz","Svetla kuća","Pogled","Dobra investicija"];
+
+/* ====================== RENDER ====================== */
+
+function el(tag, cls, html) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html !== undefined) e.innerHTML = html;
+  return e;
+}
+
+function makeSection(num, title, bodyBuilder) {
+  const sec = el('div', 'section');
+  const header = el('div', 'section-header');
+  header.innerHTML = `<h2><span class="num">${num}.</span>${title}</h2><span class="chevron">▾</span>`;
+  header.onclick = () => { sec.classList.toggle('open'); };
+  const body = el('div', 'section-body');
+  bodyBuilder(body);
+  sec.appendChild(header);
+  sec.appendChild(body);
+  return sec;
+}
+
+function chipToggle(setRef, value, chipEl, singleSelectRef) {
+  if (singleSelectRef) return;
+  if (setRef.has(value)) { setRef.delete(value); chipEl.classList.remove('selected'); }
+  else { setRef.add(value); chipEl.classList.add('selected'); }
+  updateProgress();
+}
+
+function buildCheckList(container, options, setRef) {
+  const wrap = el('div', 'check-list');
+  options.forEach(opt => {
+    const item = el('div', 'check-item');
+    item.innerHTML = `<span class="box"></span><span>${opt}</span>`;
+    item.onclick = () => {
+      if (setRef.has(opt)) { setRef.delete(opt); item.classList.remove('selected'); }
+      else { setRef.add(opt); item.classList.add('selected'); }
+      updateProgress();
+    };
+    wrap.appendChild(item);
+  });
+  container.appendChild(wrap);
+}
+
+function buildRadioRow(container, options, stateKey, maxSelect) {
+  const wrap = el('div', 'radio-row');
+  options.forEach(opt => {
+    const chip = el('div', 'radio-chip', opt);
+    chip.onclick = () => {
+      if (maxSelect === 'multi') {
+        // handled elsewhere
+      } else {
+        wrap.querySelectorAll('.radio-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        setNested(stateKey, opt);
+        updateProgress();
+      }
+    };
+    wrap.appendChild(chip);
+  });
+  container.appendChild(wrap);
+}
+
+function setNested(path, value) {
+  const parts = path.split('.');
+  let ref = state;
+  for (let i = 0; i < parts.length - 1; i++) ref = ref[parts[i]];
+  ref[parts[parts.length - 1]] = value;
+}
+
+/* --- Sekcija 1: Lokacija --- */
+function buildLokacija(body) {
+  Object.keys(OPSTINE).forEach(opstina => {
+    const block = el('div', 'opstina-block');
+    const title = el('div', 'opstina-title');
+    title.innerHTML = `<span class="plus">+</span><span class="name">${opstina}</span>`;
+    const naseljaWrap = el('div', 'naselja');
+    OPSTINE[opstina].forEach(n => {
+      const chip = el('div', 'chip', n);
+      chip.onclick = (ev) => {
+        ev.stopPropagation();
+        if (!state.opstine[opstina]) state.opstine[opstina] = new Set();
+        const set = state.opstine[opstina];
+        if (set.has(n)) { set.delete(n); chip.classList.remove('selected'); }
+        else { set.add(n); chip.classList.add('selected'); }
+        updateProgress();
+      };
+      naseljaWrap.appendChild(chip);
+    });
+    title.onclick = () => {
+      naseljaWrap.classList.toggle('open');
+      title.querySelector('.plus').textContent = naseljaWrap.classList.contains('open') ? '–' : '+';
+    };
+    block.appendChild(title);
+    block.appendChild(naseljaWrap);
+    body.appendChild(block);
+  });
+
+  const label = el('label', 'field-label', 'Dodatna opcija za sve izabrane delove grada (može više odjednom):');
+  body.appendChild(label);
+  const radiusWrap = el('div', 'radio-row');
+  RADIUS_OPCIJE.forEach(opt => {
+    const chip = el('div', 'radio-chip', opt);
+    chip.onclick = () => {
+      if (state.radius.has(opt)) { state.radius.delete(opt); chip.classList.remove('selected'); }
+      else { state.radius.add(opt); chip.classList.add('selected'); }
+      updateProgress();
+    };
+    radiusWrap.appendChild(chip);
+  });
+  body.appendChild(radiusWrap);
+}
+
+/* --- Generička sekcija sa checkbox listom --- */
+function buildMultiSection(body, options, setRef) {
+  buildCheckList(body, options, setRef);
+}
+
+/* --- Generička sekcija sa chip redom, višestruki izbor --- */
+function buildSingleSection(body, options, stateObj, key) {
+  const wrap = el('div', 'radio-row');
+  const set = stateObj[key];
+  options.forEach(opt => {
+    const chip = el('div', 'radio-chip', opt);
+    chip.onclick = () => {
+      if (set.has(opt)) { set.delete(opt); chip.classList.remove('selected'); }
+      else { set.add(opt); chip.classList.add('selected'); }
+      updateProgress();
+    };
+    wrap.appendChild(chip);
+  });
+  body.appendChild(wrap);
+}
+
+/* --- Sekcija: brojevi min/max --- */
+function buildMinMax(body, minPlaceholder, maxPlaceholder, stateObj, minKey, maxKey) {
+  const grid = el('div', 'grid-2');
+  const minWrap = el('div');
+  minWrap.innerHTML = `<label class="field-label">Minimalno</label>`;
+  const minInput = el('input');
+  minInput.type = 'number';
+  minInput.placeholder = minPlaceholder;
+  minInput.oninput = () => { stateObj[minKey] = minInput.value; updateProgress(); };
+  minWrap.appendChild(minInput);
+
+  const maxWrap = el('div');
+  maxWrap.innerHTML = `<label class="field-label">Maksimalno</label>`;
+  const maxInput = el('input');
+  maxInput.type = 'number';
+  maxInput.placeholder = maxPlaceholder;
+  maxInput.oninput = () => { stateObj[maxKey] = maxInput.value; updateProgress(); };
+  maxWrap.appendChild(maxInput);
+
+  grid.appendChild(minWrap);
+  grid.appendChild(maxWrap);
+  body.appendChild(grid);
+}
+
+/* ====================== IZGRADNJA CELE FORME ====================== */
+
+const root = document.getElementById('formRoot');
+
+root.appendChild(makeSection(1, "Lokacija", buildLokacija));
+
+root.appendChild(makeSection(2, "Tip kuće", (body) => {
+  buildMultiSection(body, ["Porodična kuća","Vikendica","Vila","Dupleks kuća","Kuća sa lokalom","Deo kuće (posebna jedinica)"], state.tip);
+}));
+
+root.appendChild(makeSection(3, "Površina kuće (m²)", (body) => {
+  buildMinMax(body, "npr. 100", "npr. 200", state, "povrsinaMin", "povrsinaMax");
+}));
+
+root.appendChild(makeSection(4, "Površina placa (ari)", (body) => {
+  buildMinMax(body, "npr. 3", "npr. 10", state, "placMin", "placMax");
+}));
+
+root.appendChild(makeSection(5, "Cena (€)", (body) => {
+  buildMinMax(body, "min.", "npr. 250000", state, "cenaMin", "cenaMax");
+}));
+
+root.appendChild(makeSection(6, "Način kupovine", (body) => {
+  buildSingleSection(body, ["Gotovina","Kredit","Kombinovano"], state, "nacinKupovine");
+  const label = el('label', 'field-label', 'Ako kredit:');
+  label.style.marginTop = "12px";
+  body.appendChild(label);
+  buildSingleSection(body, ["Banka već odobrila kredit","Tek podnosi zahtev","Nije bitno"], state, "kreditStatus");
+}));
+
+root.appendChild(makeSection(7, "Uknjiženost", (body) => {
+  buildSingleSection(body, ["Mora biti uknjižena","Može predato za legalizaciju","Može neuknjižena","Investitor","Nije bitno"], state, "uknjizenost");
+}));
+
+root.appendChild(makeSection(8, "Spratnost", (body) => {
+  buildMultiSection(body, ["Prizemna (P)","Spratna (P+1)","P + potkrovlje (P+Pk)","P+1+Pk","Suteren+prizemlje+sprat","Nije bitno"], state.spratnost);
+}));
+
+root.appendChild(makeSection(9, "Dvorište, bašta i terasa", (body) => {
+  buildMultiSection(body, ["Dvorište","Bašta","Terasa","Letnja kuhinja","Roštilj prostor","Ograđen plac","Nije bitno"], state.dvoriste);
+}));
+
+root.appendChild(makeSection(10, "Bazen", (body) => {
+  buildSingleSection(body, ["Mora imati bazen","Poželjno","Nije bitno"], state, "bazen");
+}));
+
+root.appendChild(makeSection(11, "Grejanje", (body) => {
+  buildMultiSection(body, ["Centralno","CG po potrošnji","Gas","Etažno","Toplotna pumpa","TA peć","Inverter klima","Čvrsto gorivo (drva/ugalj)","Nije bitno"], state.grejanje);
+}));
+
+root.appendChild(makeSection(12, "Stanje", (body) => {
+  buildMultiSection(body, ["Za renoviranje","Očuvana","Delimično renovirana","Renovirana","Lux","Faza gradnje (nedovršena)"], state.stanje);
+}));
+
+root.appendChild(makeSection(13, "Tip gradnje", (body) => {
+  buildMultiSection(body, ["Novogradnja","Starogradnja"], state.tipGradnje);
+}));
+
+root.appendChild(makeSection(14, "Orijentacija (sunčana strana)", (body) => {
+  buildMultiSection(body, ["Istok","Zapad","Sever","Jug","Jugoistok","Jugozapad","Severoistok","Severozapad","Nije bitno"], state.orijentacija);
+}));
+
+root.appendChild(makeSection(15, "Osvetljenost", (body) => {
+  buildSingleSection(body, ["Veoma svetla","Svetla","Nije bitno"], state, "osvetljenost");
+}));
+
+root.appendChild(makeSection(16, "Garaža i parking", (body) => {
+  buildMultiSection(body, ["Garaža","Nadstrešnica","Parking u dvorištu","Slobodan parking na ulici","Nije bitno"], state.parking);
+}));
+
+root.appendChild(makeSection(17, "Pomoćni objekti", (body) => {
+  buildMultiSection(body, ["Podrum","Ostava","Pomoćni objekat (u dvorištu)","Tavan","Nije bitno"], state.ostave);
+}));
+
+root.appendChild(makeSection(18, "Dokumentacija", (body) => {
+  buildSingleSection(body, ["Bez tereta","Hipoteka nije problem","Samo čisti papiri"], state, "dokumentacija");
+}));
+
+root.appendChild(makeSection(19, "Sadržaji u blizini", (body) => {
+  buildMultiSection(body, ["Vrtić","Škola","Dom zdravlja","Bolnica","Autobus","Tramvaj","Voz","Park","Igralište","Supermarket","Tržni centar","Pijaca","Teretana","Bazen (javni)","Šetalište","Rekreacija","Restorani","Kafići"], state.sadrzaji);
+}));
+
+root.appendChild(makeSection(20, "Šta je najvažnije", (body) => {
+  const note = el('div', 'priority-note', 'Izaberite koliko god želite.');
+  body.appendChild(note);
+  buildMultiSection(body, PRIORITETI_LISTA.map(p => "⭐ " + p), state.prioriteti);
+}));
+
+root.appendChild(makeSection(21, "Dodatni zahtevi", (body) => {
+  const ta = el('textarea');
+  ta.placeholder = 'npr. "Obavezno bez buke", "Ne uz glavni put", "Po mogućstvu pogled na prirodu"...';
+  ta.oninput = () => { state.dodatno = ta.value; updateProgress(); };
+  body.appendChild(ta);
+}));
+
+root.appendChild(makeSection(22, "Dodatna pitanja (opciono)", (body) => {
+  const rows = [
+    ["Da li prodajete svoju nekretninu pre kupovine?", ["Da","Ne","Nije bitno"], state, "prodajeNekretninu"],
+    ["Kada planirate kupovinu?", ["Odmah","Do 30 dana","Do 3 meseca","Do 6 meseci","Nije hitno"], state, "kadaKupovina"],
+    ["Da li prihvatate kuću za adaptaciju/renoviranje?", ["Da","Ne","Svejedno"], state, "adaptacija"],
+    ["Da li Vam je bitan asfaltiran prilaz kući?", ["Da, obavezno","Poželjno","Nije bitno"], state, "asfaltiranPrilaz"],
+    ["Da li želite odmah useljivu kuću?", ["Da","Ne","Svejedno"], state, "odmahUseljiv"],
+    ["Da li su kućni ljubimci bitni (dvorište)?", ["Da","Ne","Svejedno"], state, "ljubimci"],
+    ["Da li želite mirnu ulicu ili gradsku vrevu?", ["Mirnu ulicu","Gradsku vrevu","Nešto između","Svejedno"], state, "ulica"],
+    ["Da li želite pogled na park/reku/prirodu?", ["Da","Ne","Svejedno"], state, "pogled2"]
+  ];
+  rows.forEach(([q, opts, obj, key]) => {
+    const label = el('label', 'field-label', q);
+    label.style.marginTop = "10px";
+    body.appendChild(label);
+    buildSingleSection(body, opts, obj, key);
+  });
+
+  const grid = el('div', 'grid-2');
+  grid.style.marginTop = "14px";
+  const w1 = el('div');
+  w1.innerHTML = `<label class="field-label">Minuta vožnje do prevoza</label>`;
+  const i1 = el('input'); i1.type = 'number'; i1.placeholder = 'npr. 5';
+  i1.oninput = () => { state.minutiPrevoz = i1.value; updateProgress(); };
+  w1.appendChild(i1);
+  const w2 = el('div');
+  w2.innerHTML = `<label class="field-label">Minuta vožnje do škole/vrtića</label>`;
+  const i2 = el('input'); i2.type = 'number'; i2.placeholder = 'npr. 10';
+  i2.oninput = () => { state.minutiSkola = i2.value; updateProgress(); };
+  w2.appendChild(i2);
+  grid.appendChild(w1); grid.appendChild(w2);
+  body.appendChild(grid);
+
+  const label3 = el('label', 'field-label', 'Koje sisteme bezbednosti želite?');
+  label3.style.marginTop = "12px";
+  body.appendChild(label3);
+  buildMultiSection(body, ["Video nadzor","Interfon","Video-interfon","Kontrolisan pristup (kapija na daljinski/kod)","Fizičko obezbeđenje (24/7)","Ograđen kompleks/naselje","Nije važno"], state.video);
+}));
+
+root.appendChild(makeSection(23, "Vaši podaci", (body) => {
+  const note = el('div', 'priority-note', 'Ostavite ime i (opciono) kontakt, da Vas brže obavestimo kad se pojavi odgovarajuća ponuda.');
+  body.appendChild(note);
+
+  const nameLabel = el('label', 'field-label', 'Ime (i prezime)');
+  body.appendChild(nameLabel);
+  const nameInput = el('input');
+  nameInput.type = 'text';
+  nameInput.placeholder = 'npr. Marko Marković';
+  nameInput.oninput = () => { state.ime = nameInput.value; updateProgress(); };
+  body.appendChild(nameInput);
+
+  const grid = el('div', 'grid-2');
+  grid.style.marginTop = "12px";
+
+  const w1 = el('div');
+  w1.innerHTML = `<label class="field-label">Telefon 1 (opciono)</label>`;
+  const i1 = el('input');
+  i1.type = 'tel';
+  i1.placeholder = 'npr. 06X XXX XXXX';
+  i1.oninput = () => { state.telefon1 = i1.value; updateProgress(); };
+  w1.appendChild(i1);
+
+  const w2 = el('div');
+  w2.innerHTML = `<label class="field-label">Telefon 2 (opciono)</label>`;
+  const i2 = el('input');
+  i2.type = 'tel';
+  i2.placeholder = 'npr. 06X XXX XXXX';
+  i2.oninput = () => { state.telefon2 = i2.value; updateProgress(); };
+  w2.appendChild(i2);
+
+  grid.appendChild(w1);
+  grid.appendChild(w2);
+  body.appendChild(grid);
+
+  const emailLabel = el('label', 'field-label', 'Email (opciono)');
+  emailLabel.style.marginTop = "12px";
+  body.appendChild(emailLabel);
+  const emailInput = el('input');
+  emailInput.type = 'email';
+  emailInput.placeholder = 'npr. ime@email.com';
+  emailInput.oninput = () => { state.email = emailInput.value; updateProgress(); };
+  body.appendChild(emailInput);
+}));
+
+/* otvori prvu sekciju odmah */
+root.querySelector('.section').classList.add('open');
+
+/* ====================== PROGRESS ====================== */
+
+function countAnswered() {
+  let answered = 0, total = 23;
+  if (Object.keys(state.opstine).some(k => state.opstine[k].size > 0)) answered++;
+  if (state.tip.size > 0) answered++;
+  if (state.povrsinaMin || state.povrsinaMax) answered++;
+  if (state.placMin || state.placMax) answered++;
+  if (state.cenaMin || state.cenaMax) answered++;
+  if (state.nacinKupovine.size > 0) answered++;
+  if (state.uknjizenost.size > 0) answered++;
+  if (state.spratnost.size > 0) answered++;
+  if (state.dvoriste.size > 0) answered++;
+  if (state.bazen.size > 0) answered++;
+  if (state.grejanje.size > 0) answered++;
+  if (state.stanje.size > 0) answered++;
+  if (state.tipGradnje.size > 0) answered++;
+  if (state.orijentacija.size > 0) answered++;
+  if (state.osvetljenost.size > 0) answered++;
+  if (state.parking.size > 0) answered++;
+  if (state.ostave.size > 0) answered++;
+  if (state.dokumentacija.size > 0) answered++;
+  if (state.sadrzaji.size > 0) answered++;
+  if (state.prioriteti.size > 0) answered++;
+  if (state.dodatno) answered++;
+  if (state.prodajeNekretninu.size > 0 || state.kadaKupovina.size > 0) answered++;
+  if (state.ime || state.telefon1 || state.telefon2 || state.email) answered++;
+  return { answered, total };
+}
+
+function updateProgress() {
+  const { answered, total } = countAnswered();
+  const pct = Math.min(100, Math.round((answered / total) * 100));
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '%';
+}
+
+/* ====================== SAŽETAK / SLANJE ====================== */
+
+function buildSummaryText() {
+  const lines = [];
+  lines.push("📋 PROFIL ŽELJENE KUĆE");
+  lines.push("");
+
+  if (state.ime || state.telefon1 || state.telefon2 || state.email) {
+    if (state.ime) lines.push(`👤 Ime: ${state.ime}`);
+    if (state.telefon1) lines.push(`📞 Telefon 1: ${state.telefon1}`);
+    if (state.telefon2) lines.push(`📞 Telefon 2: ${state.telefon2}`);
+    if (state.email) lines.push(`✉️ Email: ${state.email}`);
+    lines.push("");
+  }
+
+  const opstineList = Object.keys(state.opstine).filter(k => state.opstine[k].size > 0);
+  if (opstineList.length) {
+    lines.push("📍 Lokacija:");
+    opstineList.forEach(o => {
+      lines.push(`  ${o}: ${[...state.opstine[o]].join(", ")}`);
+    });
+    if (state.radius.size) lines.push(`  Radijus: ${[...state.radius].join(", ")}`);
+    lines.push("");
+  }
+
+  if (state.tip.size) lines.push(`🏠 Tip kuće: ${[...state.tip].join(", ")}`);
+  if (state.povrsinaMin || state.povrsinaMax) lines.push(`📐 Površina kuće: ${state.povrsinaMin || "?"} – ${state.povrsinaMax || "?"} m²`);
+  if (state.placMin || state.placMax) lines.push(`🌳 Površina placa: ${state.placMin || "?"} – ${state.placMax || "?"} ari`);
+  if (state.cenaMin || state.cenaMax) lines.push(`💰 Cena: ${state.cenaMin || "?"} – ${state.cenaMax || "?"} €`);
+  if (state.nacinKupovine.size) lines.push(`💳 Način kupovine: ${[...state.nacinKupovine].join(", ")}${state.kreditStatus.size ? " (" + [...state.kreditStatus].join(", ") + ")" : ""}`);
+  if (state.uknjizenost.size) lines.push(`📄 Uknjiženost: ${[...state.uknjizenost].join(", ")}`);
+  if (state.spratnost.size) lines.push(`🏢 Spratnost: ${[...state.spratnost].join(", ")}`);
+  if (state.dvoriste.size) lines.push(`🌿 Dvorište/bašta/terasa: ${[...state.dvoriste].join(", ")}`);
+  if (state.bazen.size) lines.push(`🏊 Bazen: ${[...state.bazen].join(", ")}`);
+  if (state.grejanje.size) lines.push(`🔥 Grejanje: ${[...state.grejanje].join(", ")}`);
+  if (state.stanje.size) lines.push(`🛠️ Stanje: ${[...state.stanje].join(", ")}`);
+  if (state.tipGradnje.size) lines.push(`🏗️ Tip gradnje: ${[...state.tipGradnje].join(", ")}`);
+  if (state.orijentacija.size) lines.push(`🧭 Orijentacija (sunčana strana): ${[...state.orijentacija].join(", ")}`);
+  if (state.osvetljenost.size) lines.push(`☀️ Osvetljenost: ${[...state.osvetljenost].join(", ")}`);
+  if (state.parking.size) lines.push(`🚗 Garaža/parking: ${[...state.parking].join(", ")}`);
+  if (state.ostave.size) lines.push(`📦 Pomoćni objekti: ${[...state.ostave].join(", ")}`);
+  if (state.dokumentacija.size) lines.push(`📑 Dokumentacija: ${[...state.dokumentacija].join(", ")}`);
+  if (state.sadrzaji.size) lines.push(`🏘️ Sadržaji u blizini: ${[...state.sadrzaji].join(", ")}`);
+  if (state.prioriteti.size) lines.push(`Prioriteti: ${[...state.prioriteti].join(", ")}`);
+  if (state.dodatno) lines.push(`📝 Dodatno: ${state.dodatno}`);
+
+  lines.push("");
+  lines.push("— Dodatna pitanja —");
+  if (state.prodajeNekretninu.size) lines.push(`Prodaje nekretninu pre kupovine: ${[...state.prodajeNekretninu].join(", ")}`);
+  if (state.kadaKupovina.size) lines.push(`Planirana kupovina: ${[...state.kadaKupovina].join(", ")}`);
+  if (state.adaptacija.size) lines.push(`Prihvata adaptaciju: ${[...state.adaptacija].join(", ")}`);
+  if (state.asfaltiranPrilaz.size) lines.push(`Bitan asfaltiran prilaz: ${[...state.asfaltiranPrilaz].join(", ")}`);
+  if (state.odmahUseljiv.size) lines.push(`Odmah useljiva: ${[...state.odmahUseljiv].join(", ")}`);
+  if (state.ljubimci.size) lines.push(`Kućni ljubimci bitni: ${[...state.ljubimci].join(", ")}`);
+  if (state.ulica.size) lines.push(`Ulica: ${[...state.ulica].join(", ")}`);
+  if (state.pogled2.size) lines.push(`Pogled na park/reku/prirodu: ${[...state.pogled2].join(", ")}`);
+  if (state.minutiPrevoz) lines.push(`Minuta vožnje do prevoza: ${state.minutiPrevoz}`);
+  if (state.minutiSkola) lines.push(`Minuta vožnje do škole/vrtića: ${state.minutiSkola}`);
+  if (state.video.size) lines.push(`Bezbednost: ${[...state.video].join(", ")}`);
+
+  return lines.join("\n");
+}
+
+function showSummary() {
+  const text = buildSummaryText();
+  document.getElementById('summaryText').textContent = text;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+/* ====== PODESI OVDE broj telefona i email agencije ====== */
+const AGENCIJA_WHATSAPP_BROJ = "381641180879"; // bez + i bez razmaka
+const AGENCIJA_EMAIL = "stanzasvakidan@gmail.com";
+
+function sendWhatsApp() {
+  const text = encodeURIComponent(buildSummaryText());
+  const url = `https://wa.me/${AGENCIJA_WHATSAPP_BROJ}?text=${text}`;
+  window.open(url, '_blank');
+}
+
+function copyFullTextSilently() {
+  const fullText = buildSummaryText();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(fullText).catch(() => {});
+  }
+}
+
+function sendViber() {
+  copyFullTextSilently();
+  const shortMsg = "📋 Šaljem Vam profil željene kuće. Kompletan tekst je kopiran — molim nalepite ga ovde (dugi pritisak na polje za poruku → Nalepi).";
+  window.location.href = `viber://forward?text=${encodeURIComponent(shortMsg)}`;
+  const statusEl = document.getElementById('sendStatus');
+  statusEl.style.color = "#9c9890";
+  statusEl.textContent = "Kompletan profil je kopiran. Kad se Viber otvori, dugo pritisnite polje za poruku i izaberite Nalepi.";
+}
+
+function sendSMS() {
+  const text = encodeURIComponent(buildSummaryText());
+  // Format se razlikuje po uređaju (iOS koristi &body=, Android obično ?body=)
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const url = isIOS
+    ? `sms:${AGENCIJA_WHATSAPP_BROJ}&body=${text}`
+    : `sms:${AGENCIJA_WHATSAPP_BROJ}?body=${text}`;
+  window.location.href = url;
+}
+
+function sendFormSubmit() {
+  const statusEl = document.getElementById('sendStatus');
+  const btn = document.getElementById('submitBtn');
+  const text = buildSummaryText();
+  btn.disabled = true;
+  btn.textContent = "Šalje se...";
+  statusEl.textContent = "";
+
+  fetch(`https://formsubmit.co/ajax/${AGENCIJA_EMAIL}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      _subject: "Novi profil željene kuće",
+      poruka: text
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.textContent = "Pošalji profil";
+    statusEl.style.color = "#8fce8f";
+    statusEl.textContent = "✓ Profil je uspešno poslat. Hvala!";
+  })
+  .catch(err => {
+    btn.disabled = false;
+    btn.textContent = "Pošalji profil";
+    statusEl.style.color = "#e08a8a";
+    statusEl.textContent = "Slanje nije uspelo. Probajte WhatsApp ili kopirajte tekst.";
+  });
+}
+
+function copyText() {
+  const text = buildSummaryText();
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Tekst je kopiran.");
+  }).catch(() => {
+    alert("Kopiranje nije uspelo — označite tekst ručno.");
+  });
+}
+
+function resetForm() {
+  if (!confirm("Da li ste sigurni da želite da obrišete sve odgovore?")) return;
+  location.reload();
+}
+
+updateProgress();
+</script>
+</body>
+</html>
