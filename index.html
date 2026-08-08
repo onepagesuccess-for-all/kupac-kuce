@@ -35,10 +35,27 @@
     border-bottom: 1px solid #2a2a2c;
   }
   header h1 {
-    font-size: 1.7rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 4px;
     color: #d9b46a;
     margin: 0 0 6px;
-    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+  header h1::before, header h1::after {
+    content: "";
+    height: 1px;
+    width: 40px;
+    background: #8a7343;
+  }
+  @media (max-width: 480px) {
+    header h1::before, header h1::after {
+      display: none;
+    }
   }
   header p {
     margin: 0;
